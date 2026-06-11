@@ -41,10 +41,13 @@ Required output format (strict JSON):
 }
 
 Rules:
-- priority_items: 1 main item (Korean lede) + 2-3 sub items. MAX 1 item from Yonhap total across all sub items. Prefer WSJ/Reuters/NYT for main item.
-- macro_items: 2-3 items. MAX 1 item from Yonhap. Prefer WSJ/Reuters/NYT.
-- single_name_items: 2-3 items. MAX 1 item from Yonhap. Source label must exactly match input source (WSJ 10-Point → "WSJ", Markets A.M. → "WSJ", WSJ Politics → "WSJ Politics", Reuters → "Reuters", NYT → "NYT").
-"""
+- priority_items: Lead with the 1-2 most globally significant stories today (regardless of Korea/Mexico angle) — choose what a Goldman Sachs analyst would front-page. Then add 1-2 Korea/Mexico/Auto specific items. MAX 1 Yonhap item per section.
+- macro_items: 2-3 items on Fed/ECB/rates/FX/commodities. MAX 1 Yonhap.
+- single_name_items: 2-3 items. MAX 1 Yonhap. Prefer companies with direct relevance to Korean auto supply chain or Mexican manufacturing.
+- also_on_tape: 8-15 one-line English headlines, grouped by category. Include broad market news, not just Korea/Mexico.
+- Section 1 main item: The single most important story a Korea-based credit analyst covering Mexico would need to know TODAY — could be geopolitical, macro, or sector-specific.
+- Section 1 main item MUST be the single most market-moving or geopolitically significant story of the day — not just a Korea/Mexico story. Choose the story a Goldman Sachs analyst would lead with.
+- Yonhap: MAX 1 item per section (§01, §02, §03 each).
 
 
 def analyze_and_structure(emails, rss_items, market_strip):
