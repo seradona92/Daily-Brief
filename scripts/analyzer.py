@@ -68,7 +68,7 @@ def analyze_and_structure(emails, rss_items, market_strip):
         inputs_text += f"- {k}: {v['price']:.2f} ({v['change']:+.2f}, {v['change_pct']:+.2f}%)\n"
 
     msg = client.messages.create(
-        model="claude-opus-4-8",
+        model="claude-sonnet-4-6",
         max_tokens=8000,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": f"Build the morning brief JSON from these inputs:\n\n{inputs_text}\n\nReturn ONLY valid JSON, no markdown fences."}],
