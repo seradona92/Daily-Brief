@@ -63,6 +63,12 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .tape-row {{ display: flex; gap: 9px; padding: 5px 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }}
   .tape-row .bull {{ color: var(--accent); font-family: 'IBM Plex Mono',monospace; font-weight: 600; flex-shrink: 0; }}
   .tape-row .tsrc {{ color: var(--ink-faint); font-size: 11px; }}
+  .tape-badge {{ display: inline-block; font-family: 'IBM Plex Mono',monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; padding: 3px 9px; border-radius: 4px; margin-bottom: 8px; border: none; }}
+  .tb-macro {{ background: #eef3f7; color: #3b5973; }}
+  .tb-equities {{ background: #edf5ee; color: #2e5c3a; }}
+  .tb-em {{ background: #fdf5ea; color: #735129; }}
+  .tb-credit {{ background: #f3edf7; color: #5c2e61; }}
+  .tb-commodities {{ background: #f7f0e8; color: #6e4a1f; }}
   .foot {{ margin-top: 34px; padding-top: 18px; border-top: 3px double var(--line-strong); font-family: 'IBM Plex Mono',monospace; font-size: 10px; line-height: 1.7; color: var(--ink-mute); }}
   .foot b {{ color: var(--ink-soft); font-weight: 600; }}
   .foot .disc {{ margin-top: 8px; font-style: italic; color: var(--ink-faint); }}
@@ -92,6 +98,21 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 </body>
 </html>
 """
+
+
+import re
+
+USE_BADGE_STYLE = True
+
+def _clean_source_suffix(text):
+    if not text:
+        return ""
+    # 괄호형 출처 제거: "... (El Financiero)" / "... (translated)"
+    text = re.sub(r"\s*\((?:[A-Za-z][A-Za-z.]*\s*){1,3}\)\s*$", "", text).strip()
+    # 대시형 출처 제거: 대문자로 시작하는 매체명 1~4단어 ("WSJ", "WSJ / Market Data", "El Financiero")
+    # 소문자로 시작하는 본문 끝맺음("— markets rally")은 보존
+    text = re.sub(r"\s*[—–\-]{1,2}\s*(?:[A-Z][A-Za-z.]*(?:\s*/\s*|\s+)?){1,4}\s*$", "", text).strip()
+    return text
 
 
 def _kw(tag):
@@ -131,9 +152,14 @@ def _tape(items):
             continue
         rows = []
         for it in by[cat]:
+            clean = _clean_source_suffix(it["text"])
             src = f'<span class="tsrc">— {it.get("source","")}</span>' if it.get("source") else ""
-            rows.append(f'<div class="tape-row"><span class="bull">›</span><span>{it["text"]} {src}</span></div>')
-        out.append(f'<div class="tape-grp"><div class="tape-cat">{cat}</div>{"".join(rows)}</div>')
+            rows.append(f'<div class="tape-row"><span class="bull">›</span><span>{clean} {src}</span></div>')
+        if USE_BADGE_STYLE:
+            header = f'<div class="tape-badge tb-{cat.lower()}">{cat}</div>'
+        else:
+            header = f'<div class="tape-cat">{cat}</div>'
+        out.append(f'<div class="tape-grp">{header}{"".join(rows)}</div>')
     return "\n".join(out)
 
 

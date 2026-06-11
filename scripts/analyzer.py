@@ -14,7 +14,7 @@ Output language rules:
 - macro_items lede: ENGLISH — concise, IB register
 - single_name_items headline: ENGLISH original with ticker if available
 - single_name_items lede: ENGLISH — facts only, no fluff
-- also_on_tape text: ENGLISH one-liners (translate Spanish sources)
+- also_on_tape text: ENGLISH one-liners (translate Spanish sources). Do NOT append the source name inside the text field (no "— NYT", no "(WSJ)"). The source goes ONLY in the separate "source" field.
 - Spanish sources (El Financiero, Banxico): translate headlines/ledes to English
 
 Tone: Concise, factual, IB analyst register. No hype, no emoji, no marketing language.
