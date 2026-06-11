@@ -41,12 +41,9 @@ Required output format (strict JSON):
 }
 
 Rules:
-- priority_items: 1 main item with full Korean lede + 2-3 short sub items
-- macro_items: 2-3 items on Fed/ECB/rates/FX/commodities
-- single_name_items: 2-3 items on specific companies (earnings, M&A, IPO, ratings)
-- also_on_tape: 8-15 one-line English headlines, grouped by category
-- Numbers must be specific (use exact figures from sources)
-- Never invent data. If unsure, omit.
+- priority_items: 1 main item (Korean lede) + 2-3 sub items. MAX 1 item from Yonhap total across all sub items. Prefer WSJ/Reuters/NYT for main item.
+- macro_items: 2-3 items. MAX 1 item from Yonhap. Prefer WSJ/Reuters/NYT.
+- single_name_items: 2-3 items. MAX 1 item from Yonhap. Source label must exactly match input source (WSJ 10-Point → "WSJ", Markets A.M. → "WSJ", WSJ Politics → "WSJ Politics", Reuters → "Reuters", NYT → "NYT").
 """
 
 
