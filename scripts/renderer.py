@@ -1,117 +1,92 @@
-"""구조화된 데이터를 IB 모닝노트 HTML로 렌더링"""
+"""구조화된 데이터를 IB 리포트급 HTML로 렌더링 (GitHub Pages 풀페이지용)"""
 import json
 from datetime import datetime
 import pytz
 
 
-TEMPLATE = """<!DOCTYPE html>
+PAGE_TEMPLATE = """<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Markets Brief — {date_short}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;500;600&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root {{
+    --ink: #1a1a18; --ink-soft: #44443f; --ink-mute: #6b6760; --ink-faint: #94918a;
+    --paper: #faf9f5; --line: #e0ddd2; --line-soft: #ebe8df; --line-strong: #1a1a18;
+    --accent: #00827F; --up: #1a6b3a; --down: #9a1f1f;
+    --pri-bg: #f9e4e0; --pri-tx: #6a1818; --mac-bg: #dde8f3; --mac-tx: #0c3a64; --eq-bg: #dde9d2; --eq-tx: #234e0c;
+  }}
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  body {{ font-family: 'Inter', -apple-system, sans-serif; color: #1a1a1a; background: #f5f3ee; padding: 32px 16px; line-height: 1.5; }}
-  .wrap {{ max-width: 720px; margin: 0 auto; background: #fdfcf8; padding: 36px 44px; border: 0.5px solid #d8d4c8; }}
-  .masthead {{ border-bottom: 2px solid #1a1a1a; padding-bottom: 14px; margin-bottom: 22px; }}
-  .mast-top {{ display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b6760; margin-bottom: 8px; font-weight: 500; }}
-  .mast-title {{ font-family: 'Source Serif Pro', Georgia, serif; font-size: 32px; font-weight: 500; line-height: 1; letter-spacing: -0.01em; }}
-  .mast-sub {{ font-size: 12px; color: #6b6760; margin-top: 6px; font-style: italic; }}
-  .lead {{ font-family: 'Source Serif Pro', serif; font-size: 14px; line-height: 1.7; padding: 14px 0; border-bottom: 0.5px solid #d8d4c8; margin-bottom: 4px; color: #2a2a2a; }}
-  .lead::first-letter {{ font-size: 28px; font-weight: 600; float: left; line-height: 0.9; padding: 3px 6px 0 0; }}
-  .strip {{ width: 100%; border-collapse: collapse; border: 1px solid #c4bfb0; margin: 16px 0 8px; }}
-  .strip td {{ padding: 8px 10px; border-right: 1px solid #c4bfb0; width: 25%; vertical-align: top; }}
+  html {{ -webkit-text-size-adjust: 100%; }}
+  body {{ font-family: 'Inter','Noto Sans KR',-apple-system,sans-serif; color: var(--ink); background: #efece3; line-height: 1.55; padding: 28px 16px 60px; }}
+  .sheet {{ max-width: 760px; margin: 0 auto; background: var(--paper); border: 1px solid var(--line); box-shadow: 0 1px 3px rgba(0,0,0,0.04),0 8px 24px rgba(0,0,0,0.06); }}
+  .inner {{ padding: 44px 52px 40px; }}
+  @media (max-width: 600px) {{ .inner {{ padding: 28px 22px 32px; }} body {{ padding: 12px 8px 40px; }} }}
+  .topbar {{ display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono',monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-mute); padding-bottom: 16px; border-bottom: 3px double var(--line-strong); }}
+  .topbar .brand {{ font-weight: 600; color: var(--ink); }}
+  .masthead {{ padding: 22px 0 18px; border-bottom: 2px solid var(--line-strong); }}
+  .mast-title {{ font-family: 'Newsreader',Georgia,serif; font-size: 46px; font-weight: 600; line-height: 0.98; letter-spacing: -0.02em; color: var(--ink); }}
+  .mast-sub {{ font-family: 'IBM Plex Mono',monospace; font-size: 11px; color: var(--ink-mute); margin-top: 10px; letter-spacing: 0.04em; }}
+  .mast-sub .live {{ color: var(--accent); font-weight: 600; }}
+  .lead {{ font-family: 'Noto Sans KR',sans-serif; font-size: 14.5px; line-height: 1.85; color: var(--ink-soft); padding: 22px 0 20px; border-bottom: 1px solid var(--line); }}
+  .strip {{ width: 100%; border-collapse: collapse; margin: 22px 0 6px; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }}
+  .strip td {{ padding: 12px 14px; border-right: 1px solid var(--line); width: 25%; vertical-align: top; }}
   .strip td:last-child {{ border-right: none; }}
-  .strip-name {{ font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #6b6760; margin-bottom: 3px; font-weight: 500; }}
-  .strip-val {{ font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; }}
-  .strip-chg {{ font-family: 'JetBrains Mono', monospace; font-size: 10px; margin-top: 2px; }}
-  .up {{ color: #1a6b3a; }}
-  .down {{ color: #9a1f1f; }}
-  .flat {{ color: #6b6760; }}
-  .sec {{ margin-top: 24px; }}
-  .sec-bar {{ display: flex; align-items: baseline; gap: 12px; padding-bottom: 6px; border-bottom: 1px solid #1a1a1a; margin-bottom: 10px; }}
-  .sec-num {{ font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b6760; }}
-  .sec-label {{ font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; flex: 1; }}
-  .sec-tag {{ font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 7px; }}
-  .tag-pri {{ background: #f3dada; color: #6a1818; }}
-  .tag-mac {{ background: #dde8f3; color: #0c3a64; }}
-  .tag-eq {{ background: #dde9d2; color: #234e0c; }}
-  .item {{ padding: 12px 0; border-bottom: 0.5px solid #e5e2d8; }}
+  .strip-name {{ font-family: 'IBM Plex Mono',monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 5px; }}
+  .strip-val {{ font-family: 'IBM Plex Mono',monospace; font-size: 19px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }}
+  .strip-chg {{ font-family: 'IBM Plex Mono',monospace; font-size: 11px; font-weight: 500; margin-top: 3px; }}
+  .up {{ color: var(--up); }} .down {{ color: var(--down); }} .flat {{ color: var(--ink-mute); }}
+  @media (max-width: 600px) {{ .strip {{ display: grid; grid-template-columns: 1fr 1fr; }} .strip td {{ display: block; width: auto; border-bottom: 1px solid var(--line); }} .strip td:nth-child(even) {{ border-right: none; }} }}
+  .sec {{ margin-top: 32px; }}
+  .sec-head {{ display: flex; align-items: baseline; gap: 12px; padding-bottom: 7px; border-bottom: 2px solid var(--line-strong); margin-bottom: 4px; }}
+  .sec-no {{ font-family: 'IBM Plex Mono',monospace; font-size: 11px; font-weight: 600; color: var(--accent); }}
+  .sec-name {{ font-size: 11px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink); flex: 1; }}
+  .sec-tag {{ font-family: 'IBM Plex Mono',monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; }}
+  .t-pri {{ background: var(--pri-bg); color: var(--pri-tx); }} .t-mac {{ background: var(--mac-bg); color: var(--mac-tx); }} .t-eq {{ background: var(--eq-bg); color: var(--eq-tx); }}
+  .item {{ padding: 16px 0; border-bottom: 1px solid var(--line-soft); }}
   .item:last-child {{ border-bottom: none; }}
-  .item-meta {{ display: flex; gap: 8px; align-items: center; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6760; margin-bottom: 4px; }}
-  .item-source {{ font-weight: 500; color: #1a1a1a; }}
-  .item-head {{ font-family: 'Source Serif Pro', serif; font-size: 17px; font-weight: 500; line-height: 1.3; margin-bottom: 5px; letter-spacing: -0.005em; }}
-  .item-lede {{ font-size: 13px; line-height: 1.6; color: #3a3a3a; }}
-  .pill {{ display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 1px 6px; margin-left: 4px; font-weight: 500; }}
-  .p-kr {{ background: #d4eee0; color: #0f5d3e; }}
-  .p-mx {{ background: #f4e6cc; color: #6e3e08; }}
-  .p-auto {{ background: #e2dffa; color: #2e2774; }}
-  .p-fed {{ background: #f3e0e0; color: #6a1818; }}
-  .ticker {{ font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 1px 5px; background: #ebe8df; color: #1a1a1a; margin-left: 4px; }}
-  .tape-group {{ margin-top: 10px; }}
-  .tape-cat {{ font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.08em; color: #6b6760; margin-bottom: 4px; }}
-  .tape-row {{ display: flex; gap: 8px; padding: 4px 0; font-size: 12px; line-height: 1.5; }}
-  .tape-bullet {{ color: #6b6760; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding-top: 3px; min-width: 12px; }}
-  .tape-src {{ color: #8a8780; font-size: 11px; margin-left: 6px; }}
-  .footer {{ margin-top: 28px; padding: 12px 14px; background: #ebe8df; font-size: 10px; color: #6b6760; line-height: 1.55; border-left: 2px solid #c4bfb0; }}
-  .footer strong {{ color: #1a1a1a; font-weight: 500; }}
+  .meta {{ display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 7px; }}
+  .src {{ font-family: 'IBM Plex Mono',monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }}
+  .kw {{ font-family: 'IBM Plex Mono',monospace; font-size: 8.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; }}
+  .kw-kr {{ background: #d4eee0; color: #0f5d3e; }} .kw-mx {{ background: #f4e6cc; color: #6e3e08; }} .kw-auto {{ background: #e2dffa; color: #2e2774; }} .kw-gen {{ background: #eceae3; color: #5f5e5a; }}
+  .head {{ font-family: 'Newsreader',Georgia,serif; font-size: 21px; font-weight: 600; line-height: 1.24; letter-spacing: -0.011em; color: var(--ink); margin-bottom: 7px; }}
+  .item.sub .head {{ font-size: 17px; }}
+  .lede {{ font-size: 13.5px; line-height: 1.68; color: var(--ink-soft); }}
+  .lede-kr {{ font-family: 'Noto Sans KR',sans-serif; font-size: 13px; line-height: 1.78; }}
+  .tk {{ font-family: 'IBM Plex Mono',monospace; font-size: 9px; font-weight: 500; padding: 2px 6px; background: #efece3; border: 1px solid var(--line); color: var(--ink-soft); border-radius: 3px; }}
+  .tape-grp {{ margin-top: 14px; }}
+  .tape-cat {{ font-family: 'IBM Plex Mono',monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 6px; padding-bottom: 3px; border-bottom: 1px solid var(--line-soft); }}
+  .tape-row {{ display: flex; gap: 9px; padding: 5px 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }}
+  .tape-row .bull {{ color: var(--accent); font-family: 'IBM Plex Mono',monospace; font-weight: 600; flex-shrink: 0; }}
+  .tape-row .tsrc {{ color: var(--ink-faint); font-size: 11px; }}
+  .foot {{ margin-top: 34px; padding-top: 18px; border-top: 3px double var(--line-strong); font-family: 'IBM Plex Mono',monospace; font-size: 10px; line-height: 1.7; color: var(--ink-mute); }}
+  .foot b {{ color: var(--ink-soft); font-weight: 600; }}
+  .foot .disc {{ margin-top: 8px; font-style: italic; color: var(--ink-faint); }}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="masthead">
-    <div class="mast-top">
-      <span>Daily Markets Brief · Mexico City Desk</span>
-      <span>Vol. {vol} · No. {issue}</span>
+<div class="sheet">
+  <div class="inner">
+    <div class="topbar"><span class="brand">Daily Markets Brief</span><span>Mexico City Desk · Vol. {vol} · No. {issue}</span></div>
+    <div class="masthead">
+      <div class="mast-title">Morning Brief</div>
+      <div class="mast-sub">{date_full} &nbsp;·&nbsp; Mexico City &nbsp;·&nbsp; {time_local} {tz_abbr} &nbsp;·&nbsp; <span class="live">LIVE</span></div>
     </div>
-    <div class="mast-title">Morning Brief</div>
-    <div class="mast-sub">{date_full} · {city} · {time_local} {tz_abbr}</div>
-  </div>
-
-  <div class="lead">{lead}</div>
-
-  <table class="strip"><tr>{strip_cells}</tr></table>
-
-  <div class="sec">
-    <div class="sec-bar">
-      <span class="sec-num">§ 01</span>
-      <span class="sec-label">Front of Book · Korea / Mexico / Auto</span>
-      <span class="sec-tag tag-pri">Priority</span>
+    <div class="lead">{lead}</div>
+    <table class="strip"><tr>{strip_cells}</tr></table>
+    <div class="sec"><div class="sec-head"><span class="sec-no">§ 01</span><span class="sec-name">Front of Book · Korea / Mexico / Auto</span><span class="sec-tag t-pri">Priority</span></div>{priority_html}</div>
+    <div class="sec"><div class="sec-head"><span class="sec-no">§ 02</span><span class="sec-name">Macro &amp; Cross-Asset</span><span class="sec-tag t-mac">Macro</span></div>{macro_html}</div>
+    <div class="sec"><div class="sec-head"><span class="sec-no">§ 03</span><span class="sec-name">Single-Name &amp; Corporate</span><span class="sec-tag t-eq">Equity</span></div>{single_html}</div>
+    <div class="sec"><div class="sec-head"><span class="sec-no">§ 04</span><span class="sec-name">Also on the Tape · Filtered Headlines</span></div>{tape_html}</div>
+    <div class="foot">
+      <b>Sources</b> &nbsp;WSJ 10-Point · Markets A.M. · WSJ Politics · NYT · AP · El Financiero · Banxico<br>
+      <b>Filters</b> &nbsp;Korea · Mexico · Automotive · USMCA · Fed · Banxico · EM · Tariff · KRW · MXN
+      <div class="disc">Compiled automatically for internal reference. Not investment advice.</div>
     </div>
-    {priority_html}
-  </div>
-
-  <div class="sec">
-    <div class="sec-bar">
-      <span class="sec-num">§ 02</span>
-      <span class="sec-label">Macro & Cross-Asset</span>
-      <span class="sec-tag tag-mac">Macro</span>
-    </div>
-    {macro_html}
-  </div>
-
-  <div class="sec">
-    <div class="sec-bar">
-      <span class="sec-num">§ 03</span>
-      <span class="sec-label">Single-Name & Corporate</span>
-      <span class="sec-tag tag-eq">Equity</span>
-    </div>
-    {single_html}
-  </div>
-
-  <div class="sec">
-    <div class="sec-bar">
-      <span class="sec-num">§ 04</span>
-      <span class="sec-label">Also on the Tape · Filtered Headlines</span>
-    </div>
-    {tape_html}
-  </div>
-
-  <div class="footer">
-    <strong>Sources:</strong> WSJ 10-Point, Markets A.M., WSJ Politics, Reuters, NYT, Yonhap, El Financiero, Banxico.<br>
-    <strong>Filters applied:</strong> Korea · Mexico · Automotive · USMCA · Fed · Banxico · EM · Tariff · KRW · MXN.<br>
-    Internal reference only. Not investment advice.
   </div>
 </div>
 </body>
@@ -119,133 +94,76 @@ TEMPLATE = """<!DOCTYPE html>
 """
 
 
-def _pill(tag):
-    classes = {"KR": "p-kr", "MX": "p-mx", "AUTO": "p-auto", "FED": "p-fed"}
-    return f'<span class="pill {classes.get(tag, "p-kr")}">{tag}</span>'
+def _kw(tag):
+    cls = {"KR": "kw-kr", "MX": "kw-mx", "AUTO": "kw-auto"}.get(tag, "kw-gen")
+    return f'<span class="kw {cls}">{tag}</span>'
 
 
-def _render_priority(items):
+def _priority(items):
     out = []
-    for it in items:
-        tags_html = "".join(_pill(t) for t in it.get("tags", []))
-        out.append(f'''
-        <div class="item">
-          <div class="item-meta">
-            <span class="item-source">{it.get("source", "")}</span>
-            {tags_html}
-          </div>
-          <div class="item-head">{it.get("headline", "")}</div>
-          <div class="item-lede">{it.get("lede", "")}</div>
-        </div>''')
+    for i, it in enumerate(items):
+        kws = "".join(_kw(t) for t in it.get("tags", []))
+        cls = "item" if i == 0 else "item sub"
+        out.append(f'<div class="{cls}"><div class="meta"><span class="src">{it.get("source","")}</span>{kws}</div><div class="head">{it.get("headline","")}</div><div class="lede lede-kr">{it.get("lede","")}</div></div>')
     return "\n".join(out)
 
 
-def _render_macro(items):
+def _macro(items):
+    return "\n".join(f'<div class="item"><div class="meta"><span class="src">{it.get("source","")}</span></div><div class="head">{it.get("headline","")}</div><div class="lede">{it.get("lede","")}</div></div>' for it in items)
+
+
+def _single(items):
     out = []
     for it in items:
-        out.append(f'''
-        <div class="item">
-          <div class="item-meta"><span class="item-source">{it.get("source", "")}</span></div>
-          <div class="item-head">{it.get("headline", "")}</div>
-          <div class="item-lede">{it.get("lede", "")}</div>
-        </div>''')
+        tk = f'<span class="tk">{it["ticker"]}</span>' if it.get("ticker") else ""
+        out.append(f'<div class="item"><div class="meta"><span class="src">{it.get("source","")}</span>{tk}</div><div class="head">{it.get("headline","")}</div><div class="lede">{it.get("lede","")}</div></div>')
     return "\n".join(out)
 
 
-def _render_single(items):
-    out = []
+def _tape(items):
+    by = {}
     for it in items:
-        ticker_html = f'<span class="ticker">{it["ticker"]}</span>' if it.get("ticker") else ""
-        out.append(f'''
-        <div class="item">
-          <div class="item-meta">
-            <span class="item-source">{it.get("source", "")}</span>
-            {ticker_html}
-          </div>
-          <div class="item-head">{it.get("headline", "")}</div>
-          <div class="item-lede">{it.get("lede", "")}</div>
-        </div>''')
-    return "\n".join(out)
-
-
-def _render_tape(items):
-    by_cat = {}
-    for it in items:
-        cat = it.get("category", "MACRO")
-        by_cat.setdefault(cat, []).append(it)
-
+        by.setdefault(it.get("category", "MACRO"), []).append(it)
     order = ["MACRO", "EQUITIES", "EM", "CREDIT", "COMMODITIES"]
     out = []
     for cat in order:
-        if cat not in by_cat:
+        if cat not in by:
             continue
         rows = []
-        for it in by_cat[cat]:
-            src = f'<span class="tape-src">— {it.get("source", "")}</span>' if it.get("source") else ""
-            rows.append(f'<div class="tape-row"><span class="tape-bullet">›</span><span>{it["text"]}{src}</span></div>')
-        out.append(f'<div class="tape-group"><div class="tape-cat">{cat}</div>{"".join(rows)}</div>')
+        for it in by[cat]:
+            src = f'<span class="tsrc">— {it.get("source","")}</span>' if it.get("source") else ""
+            rows.append(f'<div class="tape-row"><span class="bull">›</span><span>{it["text"]} {src}</span></div>')
+        out.append(f'<div class="tape-grp"><div class="tape-cat">{cat}</div>{"".join(rows)}</div>')
     return "\n".join(out)
 
 
-def _render_strip(strip):
+def _strip(strip):
     cells = []
-    for label, data in strip.items():
-        chg = data["change"]
-        pct = data["change_pct"]
+    for label, d in strip.items():
+        chg, pct = d["change"], d["change_pct"]
         cls = "up" if chg > 0 else ("down" if chg < 0 else "flat")
         sign = "+" if chg >= 0 else ""
-        is_yield = "10Y" in label
-        val_fmt = f"{data['price']:.3f}" if is_yield else f"{data['price']:,.2f}"
-        chg_fmt = f"{sign}{chg:.3f}" if is_yield else f"{sign}{chg:.2f}"
-        unit = "bps" if is_yield else "%"
-        if is_yield:
-            chg_display = f"{sign}{int(chg*100)} {unit}"
-        else:
-            chg_display = f"{chg_fmt} · {sign}{pct:.2f}{unit}"
-        cells.append(f'''<td>
-          <div class="strip-name">{label}</div>
-          <div class="strip-val">{val_fmt}</div>
-          <div class="strip-chg {cls}">{chg_display}</div>
-        </td>''')
+        is_y = "10Y" in label
+        val = f"{d['price']:.3f}" if is_y else f"{d['price']:,.2f}"
+        disp = f"{sign}{int(chg*100)} bps" if is_y else f"{sign}{chg:.2f} · {sign}{pct:.2f}%"
+        cells.append(f'<td><div class="strip-name">{label}</div><div class="strip-val">{val}</div><div class="strip-chg {cls}">{disp}</div></td>')
     return "\n".join(cells)
 
 
 def render(structured, market_strip, issue_number=1):
     tz = pytz.timezone("America/Mexico_City")
     now = datetime.now(tz)
-    date_full = now.strftime("%A, %B %d, %Y")
-    date_short = now.strftime("%Y-%m-%d")
-    time_local = now.strftime("%H:%M")
-    tz_abbr = now.strftime("%Z")
-
-    vol = now.year - 2025
-    issue = issue_number
-
-    html = TEMPLATE.format(
-        date_full=date_full,
-        date_short=date_short,
-        city="Mexico City",
-        time_local=time_local,
-        tz_abbr=tz_abbr,
-        vol=f"{vol:01d}",
-        issue=f"{issue:03d}",
+    return PAGE_TEMPLATE.format(
+        date_full=now.strftime("%A, %B %d, %Y"),
+        date_short=now.strftime("%Y-%m-%d"),
+        time_local=now.strftime("%H:%M"),
+        tz_abbr=now.strftime("%Z"),
+        vol=f"{now.year - 2025}",
+        issue=f"{issue_number:03d}",
         lead=structured.get("lead_paragraph", ""),
-        strip_cells=_render_strip(market_strip),
-        priority_html=_render_priority(structured.get("priority_items", [])),
-        macro_html=_render_macro(structured.get("macro_items", [])),
-        single_html=_render_single(structured.get("single_name_items", [])),
-        tape_html=_render_tape(structured.get("also_on_tape", [])),
+        strip_cells=_strip(market_strip),
+        priority_html=_priority(structured.get("priority_items", [])),
+        macro_html=_macro(structured.get("macro_items", [])),
+        single_html=_single(structured.get("single_name_items", [])),
+        tape_html=_tape(structured.get("also_on_tape", [])),
     )
-    return html
-
-
-if __name__ == "__main__":
-    sample = {
-        "lead_paragraph": "테스트 리드 문단입니다.",
-        "priority_items": [{"headline": "테스트", "lede": "테스트 리드", "source": "Reuters", "tags": ["KR","MX"]}],
-        "macro_items": [],
-        "single_name_items": [],
-        "also_on_tape": [],
-    }
-    strip = {"S&P 500 Fut": {"price": 7336.25, "change": 57.75, "change_pct": 0.79}}
-    print(render(sample, strip)[:1000])

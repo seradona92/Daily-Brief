@@ -14,6 +14,7 @@ from market_data import fetch_market_strip
 from analyzer import analyze_and_structure
 from renderer import render
 from mailer import send_brief
+from archive import write_brief_and_index
 
 
 def issue_number():
@@ -57,16 +58,14 @@ def main():
           f"{len(structured.get('macro_items', []))} macro items, "
           f"{len(structured.get('also_on_tape', []))} tape items")
 
-    print("[5/5] Rendering HTML and sending email...")
+    print("[5/5] Rendering HTML, building site, sending email...")
     html = render(structured, mkt, issue_number=issue_number())
 
-    os.makedirs("output", exist_ok=True)
-    out_path = f"output/brief_{datetime.now(pytz.timezone('America/Mexico_City')).strftime('%Y%m%d')}.html"
-    with open(out_path, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"      Saved to {out_path}")
+    date_str = datetime.now(pytz.timezone("America/Mexico_City")).strftime("%Y-%m-%d")
+    page_url = write_brief_and_index(html, date_str)
+    print(f"      Site updated. Today: {page_url}")
 
-    send_brief(html)
+    send_brief(page_url, date_str)
     print("DONE.")
 
 

@@ -2,9 +2,11 @@ name: Daily Brief
 
 on:
   schedule:
-    # 멕시코시티 07:00 = UTC 13:00 (CST), 13:00 (CDT 서머타임)
     - cron: '0 13 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build-and-send:
@@ -32,10 +34,10 @@ jobs:
           GMAIL_CREDENTIALS: ${{ secrets.GMAIL_CREDENTIALS }}
         run: python scripts/main.py
 
-      - name: Upload HTML artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: brief-html
-          path: output/*.html
-          retention-days: 30
+      - name: Commit and push docs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git diff --staged --quiet || git commit -m "Brief $(date -u +%Y-%m-%d)"
+          git push
