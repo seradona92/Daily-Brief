@@ -20,9 +20,9 @@ TEMPLATE = """<!DOCTYPE html>
   .mast-sub {{ font-size: 12px; color: #6b6760; margin-top: 6px; font-style: italic; }}
   .lead {{ font-family: 'Source Serif Pro', serif; font-size: 14px; line-height: 1.7; padding: 14px 0; border-bottom: 0.5px solid #d8d4c8; margin-bottom: 4px; color: #2a2a2a; }}
   .lead::first-letter {{ font-size: 28px; font-weight: 600; float: left; line-height: 0.9; padding: 3px 6px 0 0; }}
-  .strip {{ display: grid; grid-template-columns: repeat(4, 1fr); border: 0.5px solid #c4bfb0; margin: 16px 0 8px; }}
-  .strip-cell {{ padding: 8px 10px; border-right: 0.5px solid #c4bfb0; }}
-  .strip-cell:last-child {{ border-right: none; }}
+  .strip {{ width: 100%; border-collapse: collapse; border: 1px solid #c4bfb0; margin: 16px 0 8px; }}
+  .strip td {{ padding: 8px 10px; border-right: 1px solid #c4bfb0; width: 25%; vertical-align: top; }}
+  .strip td:last-child {{ border-right: none; }}
   .strip-name {{ font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #6b6760; margin-bottom: 3px; font-weight: 500; }}
   .strip-val {{ font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; }}
   .strip-chg {{ font-family: 'JetBrains Mono', monospace; font-size: 10px; margin-top: 2px; }}
@@ -71,7 +71,7 @@ TEMPLATE = """<!DOCTYPE html>
 
   <div class="lead">{lead}</div>
 
-  <div class="strip">{strip_cells}</div>
+  <table class="strip"><tr>{strip_cells}</tr></table>
 
   <div class="sec">
     <div class="sec-bar">
@@ -202,12 +202,11 @@ def _render_strip(strip):
             chg_display = f"{sign}{int(chg*100)} {unit}"
         else:
             chg_display = f"{chg_fmt} · {sign}{pct:.2f}{unit}"
-        cells.append(f'''
-        <div class="strip-cell">
+        cells.append(f'''<td>
           <div class="strip-name">{label}</div>
           <div class="strip-val">{val_fmt}</div>
           <div class="strip-chg {cls}">{chg_display}</div>
-        </div>''')
+        </td>''')
     return "\n".join(cells)
 
 
