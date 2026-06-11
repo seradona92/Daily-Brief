@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Markets Brief — 2026-06-11</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a18; --ink-soft: #44443f; --ink-mute: #6b6760; --ink-faint: #94918a;
+    --paper: #faf9f5; --line: #e0ddd2; --line-soft: #ebe8df; --line-strong: #1a1a18;
+    --accent: #00827F; --up: #1a6b3a; --down: #9a1f1f;
+    --pri-bg: #f9e4e0; --pri-tx: #6a1818; --mac-bg: #dde8f3; --mac-tx: #0c3a64; --eq-bg: #dde9d2; --eq-tx: #234e0c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { font-family: 'Inter','Noto Sans KR',-apple-system,sans-serif; color: var(--ink); background: #efece3; line-height: 1.55; padding: 28px 16px 60px; }
+  .sheet { max-width: 760px; margin: 0 auto; background: var(--paper); border: 1px solid var(--line); box-shadow: 0 1px 3px rgba(0,0,0,0.04),0 8px 24px rgba(0,0,0,0.06); }
+  .inner { padding: 44px 52px 40px; }
+  @media (max-width: 600px) { .inner { padding: 28px 22px 32px; } body { padding: 12px 8px 40px; } }
+  .topbar { display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono',monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-mute); padding-bottom: 16px; border-bottom: 3px double var(--line-strong); }
+  .topbar .brand { font-weight: 600; color: var(--ink); }
+  .masthead { padding: 22px 0 18px; border-bottom: 2px solid var(--line-strong); }
+  .mast-title { font-family: 'Newsreader',Georgia,serif; font-size: 46px; font-weight: 600; line-height: 0.98; letter-spacing: -0.02em; color: var(--ink); }
+  .mast-sub { font-family: 'IBM Plex Mono',monospace; font-size: 11px; color: var(--ink-mute); margin-top: 10px; letter-spacing: 0.04em; }
+  .mast-sub .live { color: var(--accent); font-weight: 600; }
+  .lead { font-family: 'Noto Sans KR',sans-serif; font-size: 14.5px; line-height: 1.85; color: var(--ink-soft); padding: 22px 0 20px; border-bottom: 1px solid var(--line); }
+  .strip { width: 100%; border-collapse: collapse; margin: 22px 0 6px; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }
+  .strip td { padding: 12px 14px; border-right: 1px solid var(--line); width: 25%; vertical-align: top; }
+  .strip td:last-child { border-right: none; }
+  .strip-name { font-family: 'IBM Plex Mono',monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 5px; }
+  .strip-val { font-family: 'IBM Plex Mono',monospace; font-size: 19px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+  .strip-chg { font-family: 'IBM Plex Mono',monospace; font-size: 11px; font-weight: 500; margin-top: 3px; }
+  .up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--ink-mute); }
+  @media (max-width: 600px) { .strip { display: grid; grid-template-columns: 1fr 1fr; } .strip td { display: block; width: auto; border-bottom: 1px solid var(--line); } .strip td:nth-child(even) { border-right: none; } }
+  .sec { margin-top: 32px; }
+  .sec-head { display: flex; align-items: baseline; gap: 12px; padding-bottom: 7px; border-bottom: 2px solid var(--line-strong); margin-bottom: 4px; }
+  .sec-no { font-family: 'IBM Plex Mono',monospace; font-size: 11px; font-weight: 600; color: var(--accent); }
+  .sec-name { font-size: 11px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink); flex: 1; }
+  .sec-tag { font-family: 'IBM Plex Mono',monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; }
+  .t-pri { background: var(--pri-bg); color: var(--pri-tx); } .t-mac { background: var(--mac-bg); color: var(--mac-tx); } .t-eq { background: var(--eq-bg); color: var(--eq-tx); }
+  .item { padding: 16px 0; border-bottom: 1px solid var(--line-soft); }
+  .item:last-child { border-bottom: none; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 7px; }
+  .src { font-family: 'IBM Plex Mono',monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+  .kw { font-family: 'IBM Plex Mono',monospace; font-size: 8.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; }
+  .kw-kr { background: #d4eee0; color: #0f5d3e; } .kw-mx { background: #f4e6cc; color: #6e3e08; } .kw-auto { background: #e2dffa; color: #2e2774; } .kw-gen { background: #eceae3; color: #5f5e5a; }
+  .head { font-family: 'Newsreader',Georgia,serif; font-size: 21px; font-weight: 600; line-height: 1.24; letter-spacing: -0.011em; color: var(--ink); margin-bottom: 7px; }
+  .item.sub .head { font-size: 17px; }
+  .lede { font-size: 13.5px; line-height: 1.68; color: var(--ink-soft); }
+  .lede-kr { font-family: 'Noto Sans KR',sans-serif; font-size: 13px; line-height: 1.78; }
+  .tk { font-family: 'IBM Plex Mono',monospace; font-size: 9px; font-weight: 500; padding: 2px 6px; background: #efece3; border: 1px solid var(--line); color: var(--ink-soft); border-radius: 3px; }
+  .tape-grp { margin-top: 14px; }
+  .tape-cat { font-family: 'IBM Plex Mono',monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 6px; padding-bottom: 3px; border-bottom: 1px solid var(--line-soft); }
+  .tape-row { display: flex; gap: 9px; padding: 5px 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+  .tape-row .bull { color: var(--accent); font-family: 'IBM Plex Mono',monospace; font-weight: 600; flex-shrink: 0; }
+  .tape-row .tsrc { color: var(--ink-faint); font-size: 11px; }
+  .foot { margin-top: 34px; padding-top: 18px; border-top: 3px double var(--line-strong); font-family: 'IBM Plex Mono',monospace; font-size: 10px; line-height: 1.7; color: var(--ink-mute); }
+  .foot b { color: var(--ink-soft); font-weight: 600; }
+  .foot .disc { margin-top: 8px; font-style: italic; color: var(--ink-faint); }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="inner">
+    <div class="topbar"><span class="brand">Daily Markets Brief</span><span>Mexico City Desk · Vol. 1 · No. 162</span></div>
+    <div class="masthead">
+      <div class="mast-title">Morning Brief</div>
+      <div class="mast-sub">Thursday, June 11, 2026 &nbsp;·&nbsp; Mexico City &nbsp;·&nbsp; 14:22 CST &nbsp;·&nbsp; <span class="live">LIVE</span></div>
+    </div>
+    <div class="lead">미국과 이란이 이틀 연속 미사일·공습을 교환하며 '명목상 휴전(CINO)' 상태가 지속되는 가운데, 국제유가는 트럼프 대통령의 추가 공격 철회 발언 이후 소폭 하락했으나 에너지 가격 불안은 여전하다. ECB가 3년 만에 처음으로 금리를 인상하며 글로벌 인플레이션 우려가 재부각됐고, 세계은행은 이란 전쟁이 세계 성장을 둔화시키고 있다고 경고했다. 멕시코에서는 2026 FIFA 월드컵 개막전(멕시코 vs. 남아프리카공화국)이 멕시코시티에서 시작됐으며, USD/MXN 환율은 17.23으로 페소 강세를 보이고 있어 멕시코 내 한국계 제조업체의 달러 수익 환산에 유리한 환경이 이어지고 있다.</div>
+    <table class="strip"><tr><td><div class="strip-name">S&P 500 Fut</div><div class="strip-val">7,402.75</div><div class="strip-chg up">+124.25 · +1.71%</div></td>
+<td><div class="strip-name">USD/MXN</div><div class="strip-val">17.23</div><div class="strip-chg down">-0.20 · -1.12%</div></td>
+<td><div class="strip-name">USD/KRW</div><div class="strip-val">1,515.45</div><div class="strip-chg down">-6.37 · -0.42%</div></td>
+<td><div class="strip-name">UST 10Y</div><div class="strip-val">4.463</div><div class="strip-chg down">-7 bps</div></td></tr></table>
+    <div class="sec"><div class="sec-head"><span class="sec-no">§ 01</span><span class="sec-name">Front of Book · Korea / Mexico / Auto</span><span class="sec-tag t-pri">Priority</span></div><div class="item"><div class="meta"><span class="src">WSJ / NYT</span><span class="kw kw-gen">GEOPOLITICAL</span><span class="kw kw-gen">OIL</span><span class="kw kw-gen">MACRO</span></div><div class="head">U.S.-Iran Exchange Strikes for Second Consecutive Day; Trump Retracts Further Attack Threats After Claiming Peace Progress</div><div class="lede lede-kr">미국이 호르무즈 해협 인근 방공망·레이더 기지 등 수십 개 이란 목표물을 이틀 연속 공습했으나, 트럼프 대통령은 평화협상 진전을 주장하며 추가 공격 계획을 철회했다. 국제유가(WTI)는 일시 급등 후 소폭 하락해 배럴당 89.11달러 수준이며, 세계은행은 에너지 가격 급등이 글로벌 성장을 저해하고 있다고 공식 경고했다. 멕시코 내 한국계 자동차 부품업체의 물류·에너지 비용 상승 리스크에 지속 주목이 필요하다.</div></div>
+<div class="item sub"><div class="meta"><span class="src">NYT</span><span class="kw kw-gen">ECB</span><span class="kw kw-gen">RATES</span><span class="kw kw-gen">EM</span><span class="kw kw-mx">MX</span></div><div class="head">ECB Raises Interest Rates for First Time Since 2023 as Iran War Stokes Inflation</div><div class="lede lede-kr">유럽중앙은행(ECB)이 이란 전쟁發 에너지 인플레이션을 근거로 2023년 이후 처음으로 기준금리를 인상했으며, 성장 전망치도 하향 조정했다. 글로벌 금리 상승 사이클 재개 우려가 부상하며 신흥국(EM) 자금 조달 환경이 악화될 수 있다. 멕시코 Banxico의 추가 인하 여력 제한 가능성에 유의해야 한다.</div></div>
+<div class="item sub"><div class="meta"><span class="src">WSJ / El Financiero / NYT</span><span class="kw kw-mx">MX</span><span class="kw kw-kr">KR</span><span class="kw kw-gen">WORLD_CUP</span><span class="kw kw-gen">LOGISTICS</span></div><div class="head">South Korea vs. Czech Republic Kicks Off at 2026 FIFA World Cup; Mexico Opens Against South Africa in Mexico City</div><div class="lede lede-kr">2026 FIFA 월드컵이 멕시코시티 에스타디오 시우다드 데 멕시코에서 멕시코 대 남아공 개막전으로 시작됐으며, 한국은 체코와 첫 경기를 치렀다. Claudia Sheinbaum 멕시코 대통령은 수십 년 관행을 깨고 개막전 불참을 선택했고, 멕시코시티에서는 CNTE 등 시위대가 주요 도로를 봉쇄하는 상황이 발생했다. 월드컵 기간 멕시코 내 물류·인력 동원에 미치는 영향을 모니터링할 필요가 있다.</div></div></div>
+    <div class="sec"><div class="sec-head"><span class="sec-no">§ 02</span><span class="sec-name">Macro &amp; Cross-Asset</span><span class="sec-tag t-mac">Macro</span></div><div class="item"><div class="meta"><span class="src">NYT</span></div><div class="head">Inflation Accelerates to Fastest Pace in 3 Years as Energy Prices Bite</div><div class="lede">U.S. inflation hit its fastest pace in three years, driven by surging energy costs tied to the Iran conflict. Companies remain hesitant to fully pass through price increases to consumers, while wage growth continues to lag. The data raises the probability of a prolonged Fed pause, pressuring EM sovereigns and corporate borrowers reliant on dollar funding.</div></div>
+<div class="item"><div class="meta"><span class="src">NYT</span></div><div class="head">World Bank Warns Iran War Is Slowing Global Growth</div><div class="lede">The World Bank issued a formal warning that sustained energy price inflation stemming from U.S.-Iran hostilities is weighing on global GDP. The institution downgraded its growth outlook amid fears of a protracted conflict disrupting Strait of Hormuz oil flows. Mexico, as an oil exporter, faces a mixed picture: near-term revenue upside offset by broader demand destruction risk.</div></div>
+<div class="item"><div class="meta"><span class="src">Market Data</span></div><div class="head">USD/MXN Slides to 17.23 as Peso Strengthens; UST 10Y Yield Falls to 4.46%</div><div class="lede">The Mexican peso appreciated 1.12% against the dollar to 17.23, providing FX tailwinds for Korean manufacturers reporting MXN-denominated costs in USD. U.S. 10-year Treasury yields fell 8 bps to 4.46%, partially offsetting risk-off sentiment from the Iran conflict. KRW also firmed 0.42% to 1,515.45 per dollar, easing import cost pressures for Korean corporates.</div></div></div>
+    <div class="sec"><div class="sec-head"><span class="sec-no">§ 03</span><span class="sec-name">Single-Name &amp; Corporate</span><span class="sec-tag t-eq">Equity</span></div><div class="item"><div class="meta"><span class="src">WSJ</span><span class="tk">ORCL</span></div><div class="head">Oracle (ORCL) Slides Premarket on Larger-Than-Forecast Data-Center Capex</div><div class="lede">Oracle shares fell in premarket trading after the company disclosed capital expenditures on data-center expansion exceeded analyst estimates. The miss underscores the broader concern that AI infrastructure build-out costs are outpacing revenue generation, a theme relevant to Korean conglomerates (Samsung, SK Hynix) supplying memory into this capex cycle.</div></div>
+<div class="item"><div class="meta"><span class="src">WSJ</span><span class="tk">SMCI</span></div><div class="head">Super Micro Computer (SMCI) Rebounds After 28% Drop; $7 Billion Equity Raise Announced</div><div class="lede">SMCI shares partially recovered premarket following a 28% single-day decline after the AI server maker announced a $7 billion equity offering to fund capacity expansion. The dilutive raise signals surging demand for AI servers, with supply-chain implications for Korean memory and component manufacturers supplying into SMCI's production lines.</div></div>
+<div class="item"><div class="meta"><span class="src">NYT</span><span class="tk">SPACEX</span></div><div class="head">SpaceX IPO Priced at 92x Sales; Chinese Investors Excluded From Offering</div><div class="lede">SpaceX's blockbuster IPO is proceeding with shares priced at approximately 92 times trailing sales, drawing skepticism from analysts on valuation sustainability. The company has explicitly excluded Chinese and Hong Kong investors from the offering, reflecting broader U.S.-China technology decoupling trends. Comparable exclusion policies could extend to Korean-Chinese JV structures in future tech-adjacent listings.</div></div></div>
+    <div class="sec"><div class="sec-head"><span class="sec-no">§ 04</span><span class="sec-name">Also on the Tape · Filtered Headlines</span></div><div class="tape-grp"><div class="tape-cat">MACRO</div><div class="tape-row"><span class="bull">›</span><span>Trump shrugs off high prices amid Iran war, says 'I Love the Inflation' as real wages continue to fall — NYT <span class="tsrc">— NYT</span></span></div><div class="tape-row"><span class="bull">›</span><span>Trump calls for short-term extension of Section 702 FISA surveillance authority ahead of Friday expiry — WSJ <span class="tsrc">— WSJ</span></span></div><div class="tape-row"><span class="bull">›</span><span>U.S. emergency authorization granted for screwworm treatment; emergency response activated after first domestic cattle detection in decades — El Financiero (translated) <span class="tsrc">— El Financiero</span></span></div></div>
+<div class="tape-grp"><div class="tape-cat">EQUITIES</div><div class="tape-row"><span class="bull">›</span><span>S&P 500 futures +1.71% to 7,402.75 after Dow's worst day of the year, led by AI-related rebound in Micron, Broadcom, AMD and Marvell — WSJ <span class="tsrc">— WSJ / Market Data</span></span></div><div class="tape-row"><span class="bull">›</span><span>Cracker Barrel shares surge as much as 35% after CEO unveils improved profitability outlook and signals customer return — WSJ <span class="tsrc">— WSJ</span></span></div><div class="tape-row"><span class="bull">›</span><span>Hugo Boss shares rise after UK's Frasers Group launches ~$2.29 billion cash takeover offer — WSJ <span class="tsrc">— WSJ</span></span></div><div class="tape-row"><span class="bull">›</span><span>OpenAI considering drastic price cuts to win customers from Anthropic, potentially igniting AI services price war — WSJ <span class="tsrc">— WSJ</span></span></div><div class="tape-row"><span class="bull">›</span><span>Morgan Stanley IM study flags AI revenue growth assumptions as statistically unprecedented; base-rate analysis suggests most high-multiple AI stocks likely to underperform — WSJ <span class="tsrc">— WSJ</span></span></div></div>
+<div class="tape-grp"><div class="tape-cat">EM</div><div class="tape-row"><span class="bull">›</span><span>Mexico City sees CNTE and Mothers' Search Group protests near Estadio Azteca on World Cup opening day; major road closures reported — El Financiero (translated) <span class="tsrc">— El Financiero</span></span></div><div class="tape-row"><span class="bull">›</span><span>Mexican President Sheinbaum intentionally skips World Cup opening match, breaking decades of sports diplomacy tradition — NYT <span class="tsrc">— NYT</span></span></div><div class="tape-row"><span class="bull">›</span><span>HRW urges FIFA to negotiate ICE enforcement 'truce' at all World Cup venues to protect undocumented migrants — El Financiero (translated) <span class="tsrc">— El Financiero</span></span></div></div>
+<div class="tape-grp"><div class="tape-cat">CREDIT</div><div class="tape-row"><span class="bull">›</span><span>Surging U.S. gasoline prices have erased more than a year of Americans' wage gains, adding to consumer credit stress — WSJ <span class="tsrc">— WSJ</span></span></div></div>
+<div class="tape-grp"><div class="tape-cat">COMMODITIES</div><div class="tape-row"><span class="bull">›</span><span>Crude oil at $89.11/bbl, down 1.02%, as Trump retracts further Iran strike threats and China's oil imports remain sharply lower — WSJ / NYT <span class="tsrc">— WSJ</span></span></div><div class="tape-row"><span class="bull">›</span><span>Gold falls 0.54% to $4,111.10/oz as risk appetite recovers on Iran de-escalation signals — Market Data <span class="tsrc">— Market Data</span></span></div><div class="tape-row"><span class="bull">›</span><span>China's sharply lower oil imports are acting as a key buffer on global energy prices, helping contain broader inflation — WSJ <span class="tsrc">— WSJ</span></span></div></div></div>
+    <div class="foot">
+      <b>Sources</b> &nbsp;WSJ 10-Point · Markets A.M. · WSJ Politics · NYT · AP · El Financiero · Banxico<br>
+      <b>Filters</b> &nbsp;Korea · Mexico · Automotive · USMCA · Fed · Banxico · EM · Tariff · KRW · MXN
+      <div class="disc">Compiled automatically for internal reference. Not investment advice.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
