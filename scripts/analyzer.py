@@ -48,7 +48,7 @@ Rules:
 - Section 1 main item: The single most important story a Korea-based credit analyst covering Mexico would need to know TODAY — could be geopolitical, macro, or sector-specific.
 - Section 1 main item MUST be the single most market-moving or geopolitically significant story of the day — not just a Korea/Mexico story. Choose the story a Goldman Sachs analyst would lead with.
 - Yonhap: MAX 1 item per section (§01, §02, §03 each).
-
+"""
 
 def analyze_and_structure(emails, rss_items, market_strip):
     client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
