@@ -11,8 +11,6 @@ FEEDS = {
     "AP-Top": "https://feeds.apnews.com/rss/apf-topnews",
     "AP-Business": "https://feeds.apnews.com/rss/apf-business",
     "AP-World": "https://feeds.apnews.com/rss/apf-intlnews",
-    "Yonhap-National": "https://en.yna.co.kr/RSS/news.xml",
-    "Yonhap-Business": "https://en.yna.co.kr/RSS/economy.xml",
     "ElFinanciero": "https://www.elfinanciero.com.mx/arc/outboundfeeds/rss/?outputType=xml",
     "Banxico-Comunicados": "https://www.banxico.org.mx/RSS/RSS_PRIN.xml",
 }
